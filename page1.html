@@ -22,7 +22,7 @@
     .btn-outline{background:#133428aa;color:var(--gold2);border:1px solid #af88575c} .btn-danger{background:#541d21;color:#ffd2cb;border:1px solid #c9655d80} .btn.small{min-height:42px;padding:10px 13px;font-size:10px;border-radius:10px} .icon-btn{width:42px;height:42px;display:grid;place-items:center;background:#123327ac;border:1px solid var(--line);color:var(--gold);border-radius:12px;font-size:18px}
     /* Accueil : composition explicitement pensée pour le format portrait */
     #home{display:flex;flex-direction:column;background:radial-gradient(ellipse at 50% 18%,#34534440,transparent 48%),#08140f}
-    #home:before{content:"";position:absolute;inset:0 0 35%;background-image:linear-gradient(180deg,#08140e55 0%,#09171033 35%,#0b1b16 89%,#0b1b16 100%),url('Pic/fde.jpeg');background-size:cover;background-position:center 30%;z-index:0}
+    #home:before{content:"";position:absolute;inset:0 0 35%;background-image:linear-gradient(180deg,#08140e55 0%,#09171033 35%,#0b1b16 89%,#0b1b16 100%),url('DOSS/Pic/fde.jpeg');background-size:cover;background-position:center 30%;z-index:0}
     #home:after{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;background:radial-gradient(circle at 50% 32%,transparent 10%,#0b1b1690 67%),repeating-linear-gradient(30deg,transparent,transparent 70px,#dfb86804 71px,#dfb86804 72px)}
     #home > .home-header,#home > .home-hero,#home > .home-bottom{position:relative;z-index:1}
     .home-header{display:flex;justify-content:space-between;align-items:center;padding-top:calc(16px + env(safe-area-inset-top,0px));gap:8px}
@@ -132,7 +132,7 @@
   const minigames={trio:[{id:'horse',name:'Course hippique',symbol:'🐎'},{id:'dice',name:'Le lancer de dés',symbol:'🎲'},{id:'roulette',name:'Roulette russe',symbol:'♠'},{id:'poker',name:'Texas Hold’em',symbol:'🂡'}],duel:[{id:'horse',name:'Course en duel',symbol:'🐎'},{id:'duel-dice',name:'Dé & roulette',symbol:'🎲'},{id:'rps',name:'Shifumi',symbol:'✊'}]};
   const state={settings:{lives:5,titles:[...ranksDefault]},game:null,mode:'home',titlesOpen:false};
   let flowToken=0,waiter=null,horseSelected=null;
-  const playersSpec=[{id:0,name:'VOUS',img:'Pic/fde.jpeg',symbol:'♛'},{id:1,name:'SOP',img:'Pic/bot1.png',symbol:'♞'},{id:2,name:'BRH',img:'Pic/bot2.jpg',symbol:'♣'}];
+  const playersSpec=[{id:0,name:'VOUS',img:'Doss/Pic/fde.jpeg',symbol:'♛'},{id:1,name:'SOP',img:'Doss/Pic/bot1.png',symbol:'♞'},{id:2,name:'BRH',img:'Doss/Pic/bot2.jpg',symbol:'♣'}];
 
   function photo(p,cls='avatar') {return `<div class="${cls}"><span class="fallback">${p.symbol}</span><img src="${p.img}" alt="Portrait de ${esc(p.name)}" onerror="this.style.display='none'"></div>`;}
   function setScreen(mode){state.mode=mode;for(const id of ['home','game','end'])$(id).classList.toggle('hidden',id!==mode);window.scrollTo(0,0);}
