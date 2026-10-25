@@ -1,0 +1,306 @@
+<!doctype html>
+<html lang="fr">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover,user-scalable=no">
+  <meta name="theme-color" content="#091713">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <title>ROSU PMU — Le dernier survivant</title>
+  <style>
+    :root { color-scheme:dark; --ink:#07120f; --forest:#112b22; --green:#154c3a; --green2:#1b6048; --gold:#e6bd73; --gold2:#f9dda1; --cream:#fff4db; --muted:#b2bba8; --line:rgba(230,189,115,.22); --red:#eb6964; --pad:clamp(16px,4.5vw,24px); --ease:cubic-bezier(.2,.74,.18,1); font-family:ui-sans-serif,-apple-system,BlinkMacSystemFont,"Segoe UI",Arial,sans-serif; }
+    *{box-sizing:border-box} html,body{margin:0;min-height:100%;background:#070d0b;color:var(--cream)} body{overflow-x:hidden} button,input,select{font:inherit} button{cursor:pointer;-webkit-tap-highlight-color:transparent} button:disabled{opacity:.45;cursor:not-allowed} input,select{min-width:0} .hidden{display:none!important}
+    .desktop-glow{position:fixed;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(ellipse at 50% 5%,#235840 0%,transparent 48%),radial-gradient(ellipse at 50% 100%,#54351f 0%,transparent 45%),#080e0c}
+    #app{position:relative;margin-inline:auto;max-width:490px;min-height:100vh;min-height:100dvh;isolation:isolate;box-shadow:0 0 85px #0007;overflow:hidden;background:#0a1914}
+    .screen{min-height:100vh;min-height:100dvh;position:relative} .safe{padding-left:calc(var(--pad) + env(safe-area-inset-left,0px));padding-right:calc(var(--pad) + env(safe-area-inset-right,0px))}
+    .eyebrow{color:var(--gold);font-size:10px;font-weight:900;letter-spacing:2.2px;text-transform:uppercase} .tiny{font-size:11px;color:var(--muted)} .serif{font-family:Georgia,"Times New Roman",serif}
+    .brand{display:flex;align-items:center;gap:9px;font-weight:900;letter-spacing:2.5px;font-size:13px} .brand .mark{height:31px;width:31px;display:grid;place-items:center;color:#102116;background:linear-gradient(135deg,#ffe9b7,#bf8c40);border:1px solid #ffeac6;border-radius:8px;font-family:Georgia,serif;font-size:20px;box-shadow:0 0 22px #c98e4250}
+    .pill{display:inline-flex;align-items:center;gap:6px;border:1px solid var(--line);background:#081b14bc;border-radius:50px;padding:7px 12px;font-size:10px;font-weight:800;letter-spacing:1.5px;text-transform:uppercase;color:var(--gold2)}
+    .pill .live{height:5px;width:5px;background:#e2c37d;border-radius:50%;box-shadow:0 0 10px #dfb45b}
+    .btn{border:0;border-radius:14px;min-height:52px;padding:13px 18px;text-transform:uppercase;font-size:12px;letter-spacing:1.4px;font-weight:900;transition:transform .15s,filter .2s,background .2s;display:flex;justify-content:center;align-items:center;gap:8px;text-align:center;line-height:1.25}
+    .btn:active,.icon-btn:active,.choice:active{transform:scale(.97)} .btn-primary{background:linear-gradient(115deg,#ffe4a8 0%,#ddb06c 40%,#f6d492 100%);color:#261b0c;box-shadow:0 7px 20px #0006,inset 0 1px #fff9;border:1px solid #fff1bd}
+    .btn-outline{background:#133428aa;color:var(--gold2);border:1px solid #af88575c} .btn-danger{background:#541d21;color:#ffd2cb;border:1px solid #c9655d80} .btn.small{min-height:42px;padding:10px 13px;font-size:10px;border-radius:10px} .icon-btn{width:42px;height:42px;display:grid;place-items:center;background:#123327ac;border:1px solid var(--line);color:var(--gold);border-radius:12px;font-size:18px}
+    /* Accueil : composition explicitement pensée pour le format portrait */
+    #home{display:flex;flex-direction:column;background:radial-gradient(ellipse at 50% 18%,#34534440,transparent 48%),#08140f}
+    #home:before{content:"";position:absolute;inset:0 0 35%;background-image:linear-gradient(180deg,#08140e55 0%,#09171033 35%,#0b1b16 89%,#0b1b16 100%),url('Pic/fde.jpeg');background-size:cover;background-position:center 30%;z-index:0}
+    #home:after{content:"";position:absolute;inset:0;z-index:0;pointer-events:none;background:radial-gradient(circle at 50% 32%,transparent 10%,#0b1b1690 67%),repeating-linear-gradient(30deg,transparent,transparent 70px,#dfb86804 71px,#dfb86804 72px)}
+    #home > .home-header,#home > .home-hero,#home > .home-bottom{position:relative;z-index:1}
+    .home-header{display:flex;justify-content:space-between;align-items:center;padding-top:calc(16px + env(safe-area-inset-top,0px));gap:8px}
+    .home-hero{display:flex;flex:1;flex-direction:column;align-items:center;justify-content:center;text-align:center;min-height:220px;padding:26px 12px 14px;gap:10px}
+    .crest{width:78px;height:78px;border-radius:50%;position:relative;display:grid;place-items:center;background:radial-gradient(circle,#1c523b 2%,#0e251c 56%,#06140e 65%);border:2px solid #b99259;box-shadow:0 0 0 7px #c4a76d0d,0 0 45px #d0a56225,inset 0 0 24px #0008;color:var(--gold2);font-size:34px}
+    .crest:after{content:'★ ★ ★';position:absolute;bottom:-17px;font-size:9px;letter-spacing:5px;color:var(--gold)}
+    .hero-pre{font-size:10px;letter-spacing:3px;color:#eac689;opacity:.92;text-transform:uppercase;font-weight:900;margin-top:12px}
+    .home-hero h1{margin:0;font-family:Georgia,serif;font-size:clamp(52px,15vw,81px);line-height:.88;letter-spacing:-4px;font-weight:900;color:#fce4aa;text-shadow:0 3px #654b28,0 15px 30px #000b}
+    .home-hero h1 span{display:block;font-size:.65em;letter-spacing:10px;margin:10px 0 0 9px;color:#f3cf84} .hero-rule{width:90px;height:1px;background:linear-gradient(90deg,transparent,var(--gold),transparent);margin-top:15px}
+    .home-hero p{font-family:Georgia,serif;font-style:italic;color:#e1e4d5;font-size:14px;line-height:1.5;margin:0;max-width:270px}
+    .home-bottom{padding-bottom:calc(20px + env(safe-area-inset-bottom,0px));padding-top:4px;background:linear-gradient(180deg,transparent,#091a15 4%,#091a15 100%)}
+    .setup{position:relative;background:linear-gradient(150deg,#194335f0,#102c23f7 60%,#0d231c);border:1px solid #b9965d55;border-radius:20px;padding:18px;box-shadow:0 20px 50px #0008,inset 0 1px #ffffff12}
+    .setup-head{display:flex;align-items:center;justify-content:space-between;margin-bottom:13px}.setup-head strong{font-family:Georgia,serif;font-weight:700;font-size:19px}.setup-row{display:flex;align-items:center;justify-content:space-between;gap:12px}
+    .setting-title{font-size:12px;font-weight:900;letter-spacing:.35px}.setting-hint{font-size:11px;color:#b6c6b5;margin-top:3px}
+    .stepper{display:flex;align-items:center;gap:4px;background:#071e15;border:1px solid #385c48;border-radius:13px;padding:4px}.stepper button{display:grid;place-items:center;width:44px;height:44px;border-radius:9px;background:#25513e;border:1px solid #44664b;color:#f9dfab;font-size:23px;line-height:1}.stepper .number{min-width:44px;text-align:center;font-size:25px;font-weight:900;color:#ffe0a4;font-variant-numeric:tabular-nums}
+    .setup-separator{height:1px;background:linear-gradient(90deg,transparent,#dab87d43,transparent);margin:15px 0}
+    .title-toggle{display:flex;justify-content:space-between;align-items:center;width:100%;padding:0;color:inherit;background:none;border:0;text-align:left;min-height:40px}.title-toggle .arrow{font-size:18px;color:var(--gold);transition:transform .2s}.title-toggle.open .arrow{transform:rotate(180deg)}
+    .titles-editor{margin-top:12px;display:grid;gap:10px}.title-field{display:grid;grid-template-columns:35px 1fr;gap:9px;align-items:start}.medal{background:#093022;border:1px solid #ad945858;border-radius:9px;color:#f2d597;padding:9px 0;text-align:center;font-size:18px}.title-controls{display:grid;gap:6px} .field-label{font-size:10px;letter-spacing:1px;text-transform:uppercase;color:var(--gold);font-weight:800}
+    .title-controls select,.title-controls input{width:100%;background:#061b14;border:1px solid #57705f;border-radius:9px;min-height:41px;padding:8px 10px;color:#fcf1d6;outline:none;font-size:16px} .title-controls select:focus,.title-controls input:focus{border-color:#f2cd89}
+    .home-cta{margin-top:13px;width:100%;min-height:60px;font-size:13px}.home-caption{margin:10px 0 0;text-align:center;color:#afbaa8;font-size:10px;letter-spacing:.7px}
+    /* Structure permanente de la partie */
+    #game{display:flex;flex-direction:column;background:radial-gradient(ellipse at 50% 31%,#1d4b36 0%,#0c221b 52%,#08140f 100%)}
+    #game:before{content:"";position:absolute;inset:0;z-index:-1;background:repeating-linear-gradient(45deg,transparent,transparent 47px,#daa95e05 48px,#daa95e05 49px)}
+    .game-header{display:flex;justify-content:space-between;align-items:center;gap:8px;padding-top:calc(13px + env(safe-area-inset-top,0px));padding-bottom:12px}
+    .round-counter{display:grid;gap:2px}.round-counter b{font-family:Georgia,serif;color:#fff0cc;font-size:21px}.round-counter span{font-size:10px;text-transform:uppercase;color:#b9bbaa;letter-spacing:1.2px}
+    .phase-band{min-height:37px;display:flex;align-items:center;justify-content:center;gap:8px;border-top:1px solid #b78f4b3d;border-bottom:1px solid #b78f4b3d;background:linear-gradient(90deg,transparent,#a585391d,transparent);color:#d9b778;font-weight:900;font-size:10px;letter-spacing:2px;text-align:center}
+    .player-row{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:9px;padding-top:15px;padding-bottom:14px}
+    .player{min-width:0;text-align:center;position:relative;border:1px solid #b8945d4a;padding:10px 5px 9px;border-radius:15px;background:linear-gradient(160deg,#25534089,#112c23c8 68%,#0b1c17);box-shadow:inset 0 1px #ffffff0a}
+    .player.you{border-color:#efc9858c;box-shadow:0 0 0 1px #c3974e18,inset 0 1px #ffffff15}.player.dead{filter:grayscale(.9);opacity:.47}.player.dead:after{content:'ÉLIMINÉ';position:absolute;top:46px;left:50%;transform:translateX(-50%) rotate(-12deg);font-size:11px;font-weight:900;letter-spacing:.5px;color:#ffd1c5;background:#4c1719ee;padding:5px 6px;border:1px solid #dd726b;border-radius:3px;z-index:2}
+    .avatar{position:relative;width:min(74px,18vw);height:min(74px,18vw);margin:0 auto 8px;border:2px solid #c19a60;border-radius:50%;background:radial-gradient(circle at 40% 20%,#365942,#0d241a);box-shadow:0 5px 15px #0008,0 0 0 4px #ffffff07;overflow:hidden;display:grid;place-items:center}.avatar img{width:100%;height:100%;object-fit:contain;display:block;position:relative;z-index:1}.avatar .fallback{position:absolute;font-size:29px}.player-name{font-size:11px;font-weight:900;white-space:nowrap;overflow:hidden;text-overflow:ellipsis;letter-spacing:-.2px}.you-tag{color:var(--gold);font-size:9px;letter-spacing:1px;text-transform:uppercase;font-weight:900;margin-top:3px}
+    .hearts{display:flex;justify-content:center;align-items:center;gap:3px;margin-top:7px;color:#f47b72;font-size:12px}.hearts .n{color:#fff0d1;font-size:16px;font-weight:900;font-variant-numeric:tabular-nums}.hearts .slash{color:#8d9d88;font-size:12px}
+    .table-rim{flex:1;min-height:280px;margin:0 var(--pad);border:1px solid #b89e68a3;border-radius:24px 24px 20px 20px;background:linear-gradient(150deg,#153f2c,#0d2e21 54%,#103826);padding:8px;box-shadow:0 8px 0 #362b1c,0 11px 0 #090e0b,0 18px 36px #0009,inset 0 0 0 4px #122c20;display:flex;flex-direction:column}
+    .table-inner{flex:1;position:relative;border:1px solid #d6bc7d30;border-radius:18px;padding:15px 12px;min-height:280px;display:flex;flex-direction:column;justify-content:flex-start;align-items:stretch;gap:10px;background:radial-gradient(ellipse at 50% 70%,#20523a50,transparent 72%)}
+    .table-inner:before{content:"";position:absolute;inset:8px;border:1px dashed #d9bc7420;border-radius:14px;pointer-events:none}.table-inner > *{position:relative}
+    .mini-top{text-align:center}.mini-top .eyebrow{font-size:9px}.mini-top h2{font:700 clamp(22px,6vw,29px) Georgia,serif;color:#ffe4a9;margin:5px 0 2px;line-height:1.15}.mini-top p{font-size:12px;color:#c9d3be;margin:6px 0;line-height:1.45}
+    .game-content{flex:1;display:flex;flex-direction:column;align-items:stretch;gap:12px;justify-content:center;min-height:0}
+    .game-footer{display:flex;justify-content:space-between;align-items:center;gap:8px;padding-top:20px;padding-bottom:calc(14px + env(safe-area-inset-bottom,0px))}.footer-note{font-size:10px;color:#b8bca9;letter-spacing:.5px}.footer-note b{color:#ebd096}
+    .gold-rule{height:1px;background:linear-gradient(90deg,transparent,#d7b37285,transparent)}
+    .winner-panel{text-align:center;margin:auto 0;padding:12px 5px}.winner-panel .big-icon{font-size:42px;display:block;margin-bottom:9px;filter:drop-shadow(0 8px 9px #0009)}.winner-panel h3{font:700 26px Georgia,serif;color:#ffe0a5;margin:6px 0}.winner-panel p{font-size:13px;line-height:1.5;color:#d0ddce}.winner-panel .btn{width:100%;margin-top:14px}
+    .gamestrip{display:grid;gap:9px}.choice{border:1px solid #5f725d;background:#09291e;min-height:58px;border-radius:13px;color:var(--cream);padding:9px 12px;display:flex;align-items:center;gap:12px;text-align:left;transition:transform .17s,border .17s,background .17s}.choice.selected{border-color:#ffe6a9;background:#295c40;box-shadow:0 0 0 1px #ffe2a950}.choice .symbol{font-size:28px;line-height:1;width:33px;text-align:center}.choice .details{flex:1}.choice strong{display:block;font-size:13px}.choice small{font-size:11px;color:#b9c7ae}.choice .radio{width:17px;height:17px;border:2px solid #bca875;border-radius:50%}.choice.selected .radio{background:var(--gold);box-shadow:inset 0 0 0 4px #235139}
+    .game-bottom{margin-top:auto}.game-bottom .btn{width:100%}.lane-list{display:grid;gap:12px;padding:8px 0}.lane-label{font-size:10px;font-weight:800;display:flex;justify-content:space-between;gap:9px;color:#dfddbf}.lane{height:27px;border-radius:9px;border:1px solid #b4a77b49;position:relative;background:repeating-linear-gradient(90deg,#09281d,#09281d 19px,#103727 20px,#103727 38px);overflow:hidden;margin-top:5px}.lane .runfill{height:100%;width:0%;background:linear-gradient(90deg,#dbb36738,#fbd18a5b);border-right:2px solid #ffd387;will-change:width}.horse-icon{position:absolute;left:0;top:50%;transform:translate(-13%,-50%);font-size:25px;transition:none;will-change:left;filter:drop-shadow(0 2px 1px #000b)}.finish{position:absolute;right:11px;top:0;height:100%;width:8px;background:repeating-linear-gradient(0deg,#fff 0 5px,#292e26 5px 10px);opacity:.85}
+    .dice-grid{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:8px}.dice-grid.duel{grid-template-columns:repeat(2,minmax(0,1fr))}.dice-box{text-align:center;padding:10px 5px;border-radius:12px;border:1px solid #bd9f634d;background:#09231b}.dice-box strong{font-size:11px;display:block;white-space:nowrap;overflow:hidden;text-overflow:ellipsis}.dice-pair{display:flex;justify-content:center;gap:4px;margin:12px 0 6px;min-height:40px}.die{width:38px;height:38px;display:grid;place-items:center;background:linear-gradient(145deg,#fcf8e8,#e5d8b9);border-radius:8px;box-shadow:0 3px 0 #9c9179;color:#16271e;font-size:29px;line-height:1}.die.rolling{animation:roll .2s linear infinite alternate}.dice-total{font-size:12px;color:#f3d591;font-weight:900}
+    .roulette-chamber{width:145px;height:145px;margin:0 auto;position:relative;border:9px solid #a98049;border-radius:50%;box-shadow:inset 0 0 0 5px #233326,0 15px 25px #0007;background:repeating-conic-gradient(from 0deg,#182e24 0deg 57deg,#bc995d 58deg 60deg);display:grid;place-items:center}.roulette-chamber:after{content:"♠";font-size:32px;color:#e9c487;z-index:2;text-shadow:0 2px #0c1811}.roulette-chamber.spinning{animation:spin .48s ease-in-out infinite}.roulette-chamber .hole{position:absolute;width:18px;height:18px;border-radius:50%;background:#061710;border:3px solid #bd995f;top:14px;left:50%;transform:translateX(-50%)}.roulette-chamber .hole:nth-child(2){transform:translateX(-50%) rotate(60deg);transform-origin:9px 52px}.roulette-wrap{text-align:center;display:grid;gap:12px}.roul-status{font:italic 15px Georgia,serif;color:#ecdfbb;min-height:40px;line-height:1.45}
+    .playing-card{min-width:0;aspect-ratio:5/7;max-width:65px;width:100%;border-radius:7px;background:linear-gradient(145deg,#fffef9,#ddd8c9);color:#1c2f24;border:1px solid #fff;box-shadow:0 3px 7px #0007;display:flex;flex-direction:column;align-items:center;justify-content:center;font-family:Georgia,serif;font-size:19px;font-weight:900;line-height:1.1;animation:deal .35s var(--ease) both}.playing-card.red{color:#ba2a32}.playing-card .suit{font-size:21px}.card-back{background:repeating-linear-gradient(45deg,#29513d,#29513d 4px,#dbb877 5px,#183c2c 8px);color:#f8dd9f}.card-row{display:flex;gap:4px;justify-content:center}.poker-layout{display:grid;gap:12px}.board-title{text-align:center;font-size:10px;color:#ebce93;text-transform:uppercase;letter-spacing:1px}.hole-list{display:grid;grid-template-columns:repeat(3,minmax(0,1fr));gap:6px}.hole-entry{text-align:center}.hole-entry .card-row{margin-top:5px}.hole-entry .playing-card{max-width:38px;font-size:14px}.hole-entry .playing-card .suit{font-size:15px}.hole-entry .who{font-size:10px;font-weight:800;overflow:hidden;text-overflow:ellipsis;white-space:nowrap}.community .playing-card{max-width:48px}.poker-hand{text-align:center;font-size:10px;color:#f2d699;line-height:1.3;margin-top:5px}
+    .rps-row{display:grid;grid-template-columns:repeat(3,1fr);gap:8px}.rps-row .choice{padding:12px 4px;justify-content:center;flex-direction:column;gap:6px;font-size:11px;font-weight:900;min-height:93px}.rps-row .symbol{font-size:36px;width:auto}.duel-score{text-align:center;border:1px solid #816d494c;background:#081b15a9;padding:10px;border-radius:12px;color:#ebd5a4;font-weight:900;font-size:14px}.duel-choices{display:flex;justify-content:center;gap:22px;align-items:center;text-align:center}.duel-choices .gesture{font-size:48px}.duel-choices small{color:#b3bba9;display:block;margin-top:4px;font-size:10px}
+    /* Calques interactifs et séquences de tension */
+    .overlay{position:absolute;inset:0;z-index:50;background:#05100deF;display:flex;justify-content:center;align-items:center;padding:calc(23px + env(safe-area-inset-top,0px)) 20px calc(23px + env(safe-area-inset-bottom,0px));backdrop-filter:blur(12px)}
+    .overlay:before{content:"";position:absolute;inset:0;opacity:.35;pointer-events:none;background:radial-gradient(circle at center,#326c4d 0%,transparent 65%)}.overlay-card{position:relative;z-index:1;width:100%;max-width:390px;text-align:center}.overlay-title{font-family:Georgia,serif;font-size:32px;color:#ffe4ab;margin:10px 0;line-height:1.1}.overlay-sub{font-size:12px;line-height:1.5;color:#c6cebd}.selector{padding:16px 10px;margin:24px 0;overflow:hidden;border-radius:12px;border:1px solid #d6aa6755;box-shadow:0 0 30px #e6bd7320;background:linear-gradient(90deg,#0b2119,#23503a,#0b2119)}.selector-item{height:50px;display:flex;align-items:center;justify-content:center;font:700 20px Georgia,serif;letter-spacing:.3px;color:#ffdfa3}.selector-item.tick{animation:ticker .14s var(--ease) both}.selector:before,.selector:after{content:"◆";color:var(--gold);opacity:.8;margin:0 12px}
+    .spotlight{width:112px;height:112px;margin:15px auto;border:3px solid var(--gold);border-radius:50%;background:#173e2e;overflow:hidden;position:relative;display:grid;place-items:center;box-shadow:0 0 0 7px #d7ba7330,0 0 45px #eac77925}.spotlight img{width:100%;height:100%;object-fit:contain;z-index:1}.spotlight .fallback{position:absolute;font-size:46px}.spotlight.shake{animation:shake .27s linear 3}.lost-hearts{font-size:35px;color:#ff6460;letter-spacing:8px;animation:heartbreak .7s ease-out both;margin:13px 0}.eliminated-title{font-family:Georgia,serif;color:#ff8d86;font-size:42px;font-weight:900;letter-spacing:4px;text-shadow:0 0 28px #e5443e75;animation:deal .35s both}.glass-note{padding:12px 14px;border:1px solid #c4a16b46;background:#0d2b21ba;border-radius:12px;color:#dfdbc6;line-height:1.5;font-size:12px}
+    .history-list{margin-top:15px;max-height:min(65vh,520px);overflow:auto;text-align:left;display:grid;gap:7px}.history-entry{background:#113226;padding:11px 12px;border:1px solid #ae915454;border-radius:10px}.history-entry strong{font-size:12px;color:#f9d99d}.history-entry p{font-size:11px;color:#d1d8c7;line-height:1.5;margin:4px 0 0}.modal-buttons{display:grid;grid-template-columns:1fr 1fr;gap:10px;margin-top:20px}
+    /* Résultats */
+    #end{display:flex;flex-direction:column;background:radial-gradient(ellipse at 50% 20%,#3d5334,#0d2119 55%,#08130f);padding-top:calc(30px + env(safe-area-inset-top,0px));padding-bottom:calc(22px + env(safe-area-inset-bottom,0px));text-align:center}
+    .end-crest{font-size:45px;filter:drop-shadow(0 4px 20px #d1a54960)}.end-title{font-family:Georgia,serif;color:#fbe0a8;font-size:41px;margin:11px 0 3px;line-height:1}.end-sub{font-size:11px;letter-spacing:1.8px;text-transform:uppercase;color:#d0c4a5}.rankings{display:grid;gap:10px;margin-top:20px}.rank-card{display:flex;align-items:center;text-align:left;gap:12px;background:#103026eb;border:1px solid #9078545c;padding:11px 13px;border-radius:14px}.rank-card.first{border-color:#f1c978aa;background:linear-gradient(95deg,#56432699,#16382a)}.rank-medal{font-family:Georgia,serif;font-size:28px;color:#fbd396;width:37px}.rank-card .name{font-size:13px;font-weight:900}.rank-card .meta{font-size:10px;color:#bbc7b3;margin-top:4px}.rank-card .badge-you{margin-left:auto;color:var(--gold);font-size:9px;font-weight:900;letter-spacing:1px}.end-award{margin:17px 0;padding:17px 12px;border-radius:15px;background:linear-gradient(160deg,#1e5139,#10291e);border:1px solid #d6ad6d80;box-shadow:0 8px 20px #0005}.end-award span{display:block;color:var(--gold);font-size:10px;letter-spacing:2px;text-transform:uppercase;font-weight:800}.end-award h3{font:700 clamp(21px,6vw,30px) Georgia,serif;color:#ffdf9d;margin:8px 0 0;overflow-wrap:anywhere}.end-actions{display:grid;gap:9px;margin-top:auto}.summary-line{font-size:11px;color:#b8c7ae;margin:8px 0 13px}
+    @keyframes roll{from{transform:rotate(-14deg) translateY(-3px)}to{transform:rotate(13deg) translateY(3px)}} @keyframes spin{to{transform:rotate(360deg)}} @keyframes deal{from{transform:translateY(13px) scale(.92);opacity:0}to{transform:translateY(0) scale(1);opacity:1}} @keyframes shake{0%,100%{transform:translateX(0)}20%,60%{transform:translateX(-8px)}40%,80%{transform:translateX(8px)}} @keyframes heartbreak{from{opacity:0;transform:scale(1.5)}to{opacity:1;transform:scale(1)}} @keyframes ticker{from{opacity:.4;transform:translateY(-8px)}to{opacity:1;transform:translateY(0)}}
+    @media(max-height:780px){.home-hero{min-height:170px;padding:16px 5px 8px}.crest{width:59px;height:59px;font-size:25px}.home-hero h1{font-size:58px}.home-hero p{font-size:12px}.home-hero .hero-rule{margin-top:6px}.setup{padding:13px}.home-caption{margin-top:5px}.player-row{padding-top:9px;padding-bottom:9px}.avatar{width:58px;height:58px;margin-bottom:5px}.player{padding:6px 3px}.table-inner{padding:10px 9px;min-height:250px}.game-footer{padding-top:16px}}
+    @media(max-height:680px){.home-hero{min-height:115px}.crest,.hero-pre,.hero-rule{display:none}.home-hero h1{font-size:45px}.home-hero h1 span{margin-top:4px}.home-hero p{font-size:11px}.game-header{padding-bottom:7px}.phase-band{min-height:28px}.table-rim,.table-inner{min-height:210px}.dice-box{padding:5px 3px}.dice-pair{margin:5px 0}.die{width:32px;height:32px;font-size:24px}}
+    @media(max-height:760px){#game{height:100vh;height:100dvh;min-height:0;overflow:hidden}#game .table-rim{min-height:0;overflow:hidden;flex-basis:0}#game .table-inner{min-height:0;overflow:hidden}#game .game-content{min-height:0;overflow-y:auto;overscroll-behavior:contain;scrollbar-width:thin}#game .game-header,#game .phase-band,#game .player-row,#game .game-footer{flex-shrink:0}}
+    @media(min-width:600px){#app{border-left:1px solid #896e4455;border-right:1px solid #896e4455}.home-hero{min-height:310px}}
+    @media(prefers-reduced-motion:reduce){*,*:before,*:after{scroll-behavior:auto!important;animation-duration:.01ms!important;animation-iteration-count:1!important;transition-duration:.01ms!important}}
+  </style>
+</head>
+<body>
+<div class="desktop-glow" aria-hidden="true"></div>
+<main id="app">
+  <section id="home" class="screen">
+    <header class="home-header safe"><div class="brand"><span class="mark">R</span> ROSU PMU</div><span class="pill"><span class="live"></span> ÉDITION PRIVÉE</span></header>
+    <div class="home-hero safe"><div class="crest" aria-hidden="true">♠</div><div class="hero-pre">Le cercle des derniers</div><h1>ROSU<span>PMU</span></h1><div class="hero-rule"></div><p>Trois joueurs. Des vies à perdre.<br>Un seul survivant.</p></div>
+    <div class="home-bottom safe">
+      <div class="setup"><div class="setup-head"><strong>Votre table est prête</strong><span class="eyebrow">♣ Salon 01</span></div>
+        <div class="setup-row"><div><div class="setting-title">Vies par joueur</div><div class="setting-hint">Même nombre pour les 3 concurrents</div></div><div class="stepper"><button type="button" data-action="life-minus" aria-label="Réduire les vies">−</button><span id="life-display" class="number">5</span><button type="button" data-action="life-plus" aria-label="Augmenter les vies">+</button></div></div>
+        <div class="setup-separator"></div>
+        <button class="title-toggle" id="title-toggle" type="button" data-action="toggle-titles" aria-expanded="false"><span><span class="setting-title">✦ INTÉGRER TITRE</span><br><span class="setting-hint">Personnaliser les messages de victoire</span></span><span class="arrow">⌄</span></button>
+        <div id="titles-editor" class="titles-editor hidden"></div>
+      </div>
+      <button class="btn btn-primary home-cta" data-action="start">♠ &nbsp; LANCER UNE PARTIE &nbsp; ✦</button>
+      <p class="home-caption">AUCUNE MISE RÉELLE &nbsp; · &nbsp; HORS LIGNE &nbsp; · &nbsp; 3 JOUEURS</p>
+    </div>
+  </section>
+  <section id="game" class="screen hidden">
+    <header class="game-header safe"><div class="brand"><span class="mark">R</span> ROSU PMU</div><div class="round-counter"><span>Manche en cours</span><b id="round-display">01</b></div><button type="button" class="icon-btn" data-action="quit" aria-label="Quitter la partie">⌂</button></header>
+    <div class="phase-band" id="phase-band">♠ &nbsp; PHASE 1 · TRIO INFERNAL &nbsp; ♠</div>
+    <div class="player-row safe" id="players"></div>
+    <div class="table-rim"><div class="table-inner"><div class="mini-top"><div id="mini-kicker" class="eyebrow">LE SORT DÉCIDE</div><h2 id="mini-name">En attente du tirage</h2><p id="mini-desc">Préparez-vous pour la première manche.</p></div><div id="game-content" class="game-content"></div></div></div>
+    <footer class="game-footer safe"><div class="footer-note">♣ &nbsp; <b id="alive-display">3</b> JOUEURS EN LICE</div><button type="button" class="btn btn-outline small" data-action="history">☷ &nbsp; HISTORIQUE</button></footer>
+  </section>
+  <section id="end" class="screen hidden safe"></section>
+  <div id="overlay" class="overlay hidden" role="dialog" aria-modal="true" aria-live="polite"></div>
+</main>
+<script>
+(() => {
+  'use strict';
+  // -----------------------------------------------------------
+  // ROSU PMU : jeu local. Aucune dépendance, aucun serveur.
+  // Toutes les décisions de jeu précèdent leur animation.
+  // -----------------------------------------------------------
+  const $ = id => document.getElementById(id);
+  const esc = value => String(value).replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+  const reduced = () => matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const randomInt = (a,b) => Math.floor(Math.random()*(b-a+1))+a;
+  const pick = arr => arr[randomInt(0,arr.length-1)];
+  const shuffle = arr => {const a=[...arr];for(let i=a.length-1;i>0;i--){const j=randomInt(0,i);[a[i],a[j]]=[a[j],a[i]];}return a;};
+  const hearts = n => `♥ <span class="n">${n}</span>`;
+  const presets = ['G + ANL','G','TR','WIN','Cucold','Femdom','Jeu'];
+  const ranksDefault = ['Le Roi du PMU','Pas si nul finalement','Remboursez mes jetons'];
+  const horses=[{name:'Éclair rouge',icon:'🐎',trait:'Le favori des turfistes'},{name:'Comète',icon:'🏇',trait:'Une vraie fusée'},{name:'Minuit',icon:'🐴',trait:'L’outsider imprévisible'}];
+  const RPS=[{key:'rock',label:'Pierre',icon:'✊'},{key:'paper',label:'Feuille',icon:'✋'},{key:'scissors',label:'Ciseaux',icon:'✌️'}];
+  const minigames={trio:[{id:'horse',name:'Course hippique',symbol:'🐎'},{id:'dice',name:'Le lancer de dés',symbol:'🎲'},{id:'roulette',name:'Roulette russe',symbol:'♠'},{id:'poker',name:'Texas Hold’em',symbol:'🂡'}],duel:[{id:'horse',name:'Course en duel',symbol:'🐎'},{id:'duel-dice',name:'Dé & roulette',symbol:'🎲'},{id:'rps',name:'Shifumi',symbol:'✊'}]};
+  const state={settings:{lives:5,titles:[...ranksDefault]},game:null,mode:'home',titlesOpen:false};
+  let flowToken=0,waiter=null,horseSelected=null;
+  const playersSpec=[{id:0,name:'VOUS',img:'Pic/fde.jpeg',symbol:'♛'},{id:1,name:'SOP',img:'Pic/bot1.png',symbol:'♞'},{id:2,name:'BRH',img:'Pic/bot2.jpg',symbol:'♣'}];
+
+  function photo(p,cls='avatar') {return `<div class="${cls}"><span class="fallback">${p.symbol}</span><img src="${p.img}" alt="Portrait de ${esc(p.name)}" onerror="this.style.display='none'"></div>`;}
+  function setScreen(mode){state.mode=mode;for(const id of ['home','game','end'])$(id).classList.toggle('hidden',id!==mode);window.scrollTo(0,0);}
+  function setOverlay(html){$('overlay').innerHTML=html;$('overlay').classList.remove('hidden');}
+  function hideOverlay(){$('overlay').classList.add('hidden');$('overlay').innerHTML='';}
+  function setMini(kicker,title,desc){$('mini-kicker').textContent=kicker;$('mini-name').textContent=title;$('mini-desc').textContent=desc;}
+  function setContent(html){$('game-content').innerHTML=html;}
+  function renderHome(){ $('life-display').textContent=state.settings.lives; $('title-toggle').classList.toggle('open',state.titlesOpen);$('title-toggle').setAttribute('aria-expanded',String(state.titlesOpen));$('titles-editor').classList.toggle('hidden',!state.titlesOpen);if(!state.titlesOpen)return;
+    $('titles-editor').innerHTML=state.settings.titles.map((title,i)=>`<div class="title-field"><div class="medal">${['🥇','🥈','🥉'][i]}</div><div class="title-controls"><label class="field-label" for="title${i}">${['1re place','2e place','3e place'][i]}</label><select data-action="preset" data-index="${i}" aria-label="Choisir un titre prédéfini"><option value="">Choisir un titre rapide…</option>${presets.map(v=>`<option value="${esc(v)}" ${v===title?'selected':''}>${esc(v)}</option>`).join('')}</select><input id="title${i}" type="text" maxlength="80" data-action="title-input" data-index="${i}" value="${esc(title)}" placeholder="Titre personnalisé" aria-label="Message de la ${i+1}e place"></div></div>`).join('');
+  }
+  function renderPlayers(){const g=state.game;if(!g)return;$('round-display').textContent=String(g.round).padStart(2,'0');$('phase-band').innerHTML=g.phase===1?'♠ &nbsp; PHASE 1 · TRIO INFERNAL &nbsp; ♠':'✦ &nbsp; PHASE 2 · DUEL FINAL &nbsp; ✦';$('alive-display').textContent=alive().length;$('players').innerHTML=g.players.map(p=>`<div class="player ${p.id===0?'you':''} ${!p.alive?'dead':''}">${photo(p)}<div class="player-name">${esc(p.name)}</div><div class="you-tag">${p.id===0?'JOUEUR':'BOT · '+p.id}</div><div class="hearts">${hearts(p.lives)} <span class="slash">/ ${g.initialLives}</span></div></div>`).join('');}
+  function alive(){return state.game.players.filter(p=>p.alive);}
+  function humanIn(players){return players.some(p=>p.id===0);}
+  function duration(ms){return reduced()?Math.min(ms,100):ms;}
+  function delay(ms,token){return new Promise((resolve,reject)=>setTimeout(()=>token===flowToken?resolve():reject(new Error('cancelled')),duration(ms)));}
+  function guard(token){if(token!==flowToken)throw new Error('cancelled');}
+  function waitFor(action,token){guard(token);return new Promise(resolve=>{waiter={action,resolve,token};});}
+  function resolveWait(action,value){if(waiter?.action===action){const w=waiter;waiter=null;w.resolve(value);return true;}return false;}
+  function cancelFlow(){flowToken++;if(waiter){const w=waiter;waiter=null;w.resolve(null);}hideOverlay();}
+  function newGame(){cancelFlow();state.game={round:0,phase:1,players:playersSpec.map(p=>({...p,lives:state.settings.lives,alive:true,rank:null})),initialLives:state.settings.lives,titles:[...state.settings.titles],history:[],current:null,eliminationOrder:[]};setScreen('game');renderPlayers();setMini('BIENVENUE À LA TABLE','La partie commence','Le destin choisit le premier jeu…');setContent('<div class="winner-panel"><span class="big-icon">♠</span><p>Trois joueurs. Une seule place sur le trône.</p></div>');const token=flowToken;gameLoop(token).catch(err=>{if(err.message!=='cancelled'){console.error(err);setMini('INCIDENT','Une erreur est survenue','Retournez au menu puis relancez une partie.');setContent('<button class="btn btn-outline" data-action="quit">Retour au menu</button>');}});}
+
+  async function gameLoop(token){const g=state.game;while(alive().length>1){guard(token);
+      if(g.phase===1&&alive().length===2){g.phase=2;renderPlayers();setOverlay(`<div class="overlay-card"><div class="eyebrow">DERNIER CARRÉ</div><div class="overlay-title">IL N’EN RESTE<br>PLUS QUE DEUX.</div><p class="overlay-sub">La table change de règles. Désormais, c'est un face-à-face.</p><div class="crest" style="margin:25px auto">⚔</div></div>`);await delay(2450,token);hideOverlay();}
+      g.round++;const items=g.phase===1?minigames.trio:minigames.duel;const mini=pick(items);g.current=mini;renderPlayers();await animateDraw(items,mini,token);guard(token);
+      let result;
+      switch(mini.id){case 'horse':result=await playHorse(token);break;case 'dice':result=await playDice(token);break;case 'roulette':result=await playRoulette(token);break;case 'poker':result=await playPoker(token);break;case 'duel-dice':result=await playDuelDice(token);break;case 'rps':result=await playRps(token);break;}
+      guard(token);await applyRound(result,mini,token);guard(token);if(alive().length<=1)break;
+      if(humanIn(alive())){setContent(`<div class="winner-panel"><span class="big-icon">${mini.symbol}</span><h3>Manche terminée</h3><p>${esc(result.summary)}</p><button class="btn btn-primary" data-action="next">MANCHE SUIVANTE &nbsp; ›</button></div>`);await waitFor('next',token);guard(token);}else{setMini('LA PARTIE CONTINUE','Les bots s’affrontent','Le classement final sera connu sous peu.');setContent(`<div class="winner-panel"><span class="big-icon">♠</span><h3>Manche ${g.round} terminée</h3><p>${esc(result.summary)}<br>Les bots poursuivent automatiquement.</p></div>`);await delay(1550,token);}
+    }
+    guard(token);finishGame();
+  }
+  async function animateDraw(options,mini,token){setMini('TIRAGE AU SORT','Le sort tourne…','Le prochain jeu est déterminé au hasard.');setContent(`<div class="winner-panel"><span class="big-icon">✦</span><p>Le croupier fait son choix.</p></div>`);setOverlay(`<div class="overlay-card"><div class="eyebrow">MANCHE ${state.game.round} · ${state.game.phase===1?'TRIO':'DUEL'}</div><div class="overlay-title">LA ROUE DU SORT</div><p class="overlay-sub">Quel jeu la table vous réserve-t-elle ?</p><div class="selector"><div class="selector-item" id="selector-value">♠ &nbsp; • • •</div></div><div class="eyebrow" id="draw-status">TIRAGE EN COURS</div></div>`);
+    const steps=reduced()?2:22;for(let i=0;i<steps;i++){guard(token);const m=i===steps-1?mini:options[(i*3+randomInt(0,options.length-1))%options.length];const el=$('selector-value');if(el)el.textContent=m.symbol+'  '+m.name;await delay(i<14?65:65+(i-13)*24,token);} const d=$('draw-status');if(d)d.textContent='✦ JEU SÉLECTIONNÉ ✦';await delay(550,token);hideOverlay();}
+
+  // Course : résultat décidé avant la première image. Aucun concurrent
+  // ne franchit l'arrivée avant le vainqueur calculé.
+  async function playHorse(token){const entrants=alive();setMini('L’HIPPODROME','La course des 100 mètres',entrants.length===3?'Choisissez votre monture. Les bots recevront les chevaux restants.':'Deux concurrents, une seule ligne d’arrivée.');horseSelected=null;
+    const needChoice=humanIn(entrants);if(needChoice){renderHorseChoices();const h=await waitFor('horse-confirm',token);guard(token);if(h===null)throw new Error('cancelled');horseSelected=Number(h);}
+    const indices=shuffle([0,1,2].filter(i=>i!==horseSelected));const assignments=new Map();if(needChoice)assignments.set(0,horseSelected);let idx=0;for(const p of entrants){if(!assignments.has(p.id))assignments.set(p.id,indices[idx++]);}
+    const winner=pick(entrants);const scores=new Map();for(const p of entrants)scores.set(p.id,p.id===winner.id?100:randomInt(80,97));
+    const length=entrants.length===3?randomInt(5600,7800):randomInt(3900,4800);
+    setMini('LA COURSE EST LANCÉE','C’est parti !','100 mètres · Le premier à franchir la ligne remporte la manche.');
+    setContent(`<div class="lane-list">${entrants.map(p=>`<div><div class="lane-label"><span>${esc(p.name)} · ${esc(horses[assignments.get(p.id)].name)}</span><span id="meters-${p.id}">0 m</span></div><div class="lane"><div class="runfill" id="fill-${p.id}"></div><span class="horse-icon" id="horse-${p.id}">🐎</span><span class="finish"></span></div></div>`).join('')}</div><p class="tiny" style="text-align:center">✦ Les foulées s'accélèrent vers l'arrivée…</p>`);
+    const start=performance.now();let previous=0;
+    await new Promise((resolve,reject)=>{function frame(t){if(token!==flowToken){reject(new Error('cancelled'));return;}const prog=Math.min(1,(t-start)/duration(length));if(prog>=1){for(const p of entrants)draw(p,scores.get(p.id));resolve();return;}if(t-previous>30){previous=t;for(const p of entrants){const final=scores.get(p.id);const wave=Math.sin(prog*25+p.id*2.7)*.5;const eased=Math.pow(prog,.83);draw(p,Math.max(0,Math.min(99,final*eased+wave)));}}requestAnimationFrame(frame);}function draw(p,n){const pct=Math.min(100,n);const fill=$('fill-'+p.id),icon=$('horse-'+p.id),meter=$('meters-'+p.id);if(fill)fill.style.width=pct+'%';if(icon)icon.style.left=`${Math.min(pct,96)}%`;if(meter)meter.textContent=Math.floor(pct)+' m';}requestAnimationFrame(frame);});
+    await delay(750,token);const losers=entrants.filter(p=>p.id!==winner.id);return {losses:losers.map(p=>({id:p.id,n:1})),summary:`${winner.name} remporte la course ! ${losers.map(p=>p.name).join(' et ')} ${losers.length>1?'perdent':'perd'} une vie.`,details:`🥇 ${winner.name} · ${horses[assignments.get(winner.id)].name} gagne les 100 mètres.`};
+  }
+  function renderHorseChoices(){const selected=horseSelected;setContent(`<div class="gamestrip">${horses.map((h,i)=>`<button class="choice ${i===selected?'selected':''}" data-action="horse-select" data-index="${i}"><span class="symbol">${h.icon}</span><span class="details"><strong>${esc(h.name)}</strong><small>${esc(h.trait)}</small></span><span class="radio"></span></button>`).join('')}</div><div class="game-bottom"><button class="btn btn-primary" data-action="horse-confirm" ${selected===null?'disabled':''}>CONFIRMER MON CHEVAL &nbsp; ›</button></div>`);}
+
+  // Dés : les égalités au total le plus faible entraînent autant de pertes.
+  const diceGlyph=['','⚀','⚁','⚂','⚃','⚄','⚅'];
+  const dieHtml=(v,rolling=false)=>`<div class="die ${rolling?'rolling':''}" aria-label="Dé ${v||'en mouvement'}">${diceGlyph[v]||'⚄'}</div>`;
+  async function playDice(token){const ps=alive();setMini('LE CROUPIER ANNONCE','Double six ?','Le total le plus faible perd une vie. Toute égalité en dernière place est perdante.');
+    setContent(`<div class="dice-grid">${ps.map(p=>`<div class="dice-box"><strong>${esc(p.name)}</strong><div class="dice-pair" id="dice-${p.id}">${dieHtml(0)}${dieHtml(0)}</div><div class="dice-total" id="total-${p.id}">—</div></div>`).join('')}</div>${humanIn(ps)?'<div class="game-bottom"><button class="btn btn-primary" data-action="dice-go">LANCER LES DÉS &nbsp; 🎲</button></div>':'<div class="tiny" style="text-align:center">Les bots préparent leurs dés…</div>'}`);
+    if(humanIn(ps))await waitFor('dice-go',token);else await delay(650,token);guard(token);
+    const res=ps.map(p=>({id:p.id,name:p.name,a:randomInt(1,6),b:randomInt(1,6)}));for(const r of res){const el=$('dice-'+r.id);if(el)el.innerHTML=dieHtml(0,true)+dieHtml(0,true);}
+    await delay(1350,token);for(const r of res){$('dice-'+r.id).innerHTML=dieHtml(r.a)+dieHtml(r.b);$('total-'+r.id).textContent='TOTAL '+(r.a+r.b);}await delay(720,token);
+    const min=Math.min(...res.map(r=>r.a+r.b)),losers=res.filter(r=>r.a+r.b===min);return {losses:losers.map(r=>({id:r.id,n:1})),summary:`${losers.map(r=>r.name).join(' et ')} ${losers.length===1?'perd':'perdent'} une vie avec ${min} points.`,details:res.map(r=>`${r.name} : ${r.a}+${r.b}=${r.a+r.b}`).join(' · ')};
+  }
+
+  // Roulette fictive : 6 positions distinctes, exactement 2 charges,
+  // un emplacement consommé par tour et aucun retirage de chambre.
+  async function playRoulette(token){const ps=alive();setMini('SILENCE À LA TABLE','Roulette russe','Deux impacts dans un barillet de six chambres. Le premier coûte deux vies, le second une vie.');const startIndex=randomInt(0,ps.length-1);const start=ps[startIndex];setContent(`<div class="roulette-wrap"><div class="roulette-chamber" id="chamber"></div><div class="roul-status" id="roulette-status">${esc(start.name)} commence la séquence.</div><div class="glass-note">6 chambres · 2 balles · Les joueurs passent à tour de rôle.</div></div>${humanIn(ps)?'<div class="game-bottom"><button class="btn btn-primary" data-action="roulette-go">FAIRE TOURNER LE BARILLET &nbsp; ♠</button></div>':''}`);
+    if(humanIn(ps))await waitFor('roulette-go',token);else await delay(700,token);guard(token);
+    const loaded=new Set(shuffle([0,1,2,3,4,5]).slice(0,2));let hitCount=0, chamber=0,actorIndex=startIndex,losses=new Map(),log=[];
+    while(chamber<6&&hitCount<2){guard(token);const currently=ps.filter(p=>p.lives-(losses.get(p.id)||0)>0);if(currently.length<=1)break;
+      let actor=ps[actorIndex%ps.length],spins=0;while(!currently.some(p=>p.id===actor.id)&&spins<ps.length){actorIndex++;actor=ps[actorIndex%ps.length];spins++;}if(!currently.some(p=>p.id===actor.id))break;
+      const status=$('roulette-status');if(status)status.textContent=`Tour ${chamber+1}/6 · ${actor.name} prend le risque…`;
+      $('chamber')?.classList.add('spinning');await delay(750,token);$('chamber')?.classList.remove('spinning');await delay(400,token);
+      if(loaded.has(chamber)){hitCount++;const n=hitCount===1?2:1;losses.set(actor.id,(losses.get(actor.id)||0)+n);log.push(`${actor.name} : impact ${hitCount} (−${n} ${n>1?'vies':'vie'})`);if(status)status.textContent=`💥 Impact n°${hitCount} ! ${actor.name} risque −${n} ${n>1?'vies':'vie'}.`;}else{log.push(`${actor.name} : chambre vide`);if(status)status.textContent=`CLIC. ${actor.name} est épargné.`;}
+      await delay(900,token);chamber++;actorIndex++;
+    }
+    return {losses:[...losses].map(([id,n])=>({id,n})),summary:log.filter(x=>x.includes('impact')).join(' · ')||'Plus assez de joueurs en lice : séquence interrompue.',details:log.join(' · ')};
+  }
+
+  // Poker : classement exact des mains de cinq cartes, parmi C(7,5).
+  // Catégories 8 à 0, avec kickers lexicographiques.
+  function straightHigh(ranks){const r=[...new Set(ranks)].sort((a,b)=>b-a);if(r.includes(14))r.push(1);for(let i=0;i<=r.length-5;i++){if(r[i]-r[i+4]===4)return r[i];}return 0;}
+  function scoreFive(cards){const counts=new Map();for(const c of cards)counts.set(c.v,(counts.get(c.v)||0)+1);const entries=[...counts].map(([v,n])=>({v,n})).sort((a,b)=>b.n-a.n||b.v-a.v);const values=cards.map(c=>c.v).sort((a,b)=>b-a);const flush=cards.every(c=>c.s===cards[0].s);const str=straightHigh(values);
+    if(flush&&str)return [8,str];if(entries[0].n===4)return [7,entries[0].v,entries[1].v];if(entries[0].n===3&&entries[1].n===2)return [6,entries[0].v,entries[1].v];if(flush)return [5,...values];if(str)return [4,str];if(entries[0].n===3)return [3,entries[0].v,...entries.slice(1).map(x=>x.v).sort((a,b)=>b-a)];if(entries[0].n===2&&entries[1].n===2)return [2,Math.max(entries[0].v,entries[1].v),Math.min(entries[0].v,entries[1].v),entries[2].v];if(entries[0].n===2)return [1,entries[0].v,...entries.slice(1).map(x=>x.v).sort((a,b)=>b-a)];return [0,...values];
+  }
+  function cmpScore(a,b){for(let i=0;i<Math.max(a.length,b.length);i++){const diff=(a[i]||0)-(b[i]||0);if(diff)return diff;}return 0;}
+  function bestHand(cards){let best=null;for(let a=0;a<3;a++)for(let b=a+1;b<4;b++)for(let c=b+1;c<5;c++)for(let d=c+1;d<6;d++)for(let e=d+1;e<7;e++){const score=scoreFive([cards[a],cards[b],cards[c],cards[d],cards[e]]);if(!best||cmpScore(score,best)>0)best=score;}return best;}
+  const handNames=['Carte haute','Une paire','Deux paires','Brelan','Quinte','Couleur','Full','Carré','Quinte flush'];
+  const describeHand=s=>s[0]===8&&s[1]===14?'Quinte flush royale':handNames[s[0]];
+  const suitSymbol={S:'♠',H:'♥',D:'♦',C:'♣'};
+  const valSymbol=v=>({11:'V',12:'D',13:'R',14:'A'}[v]||String(v));
+  const cardHtml=(c,hidden=false)=>hidden?'<div class="playing-card card-back">♠</div>':`<div class="playing-card ${['H','D'].includes(c.s)?'red':''}"><span>${valSymbol(c.v)}</span><span class="suit">${suitSymbol[c.s]}</span></div>`;
+  async function playPoker(token){const ps=alive();setMini('TEXAS HOLD’EM','Le poker des survivants','Les mains sont visibles. Seule la meilleure combinaison de cinq cartes l’emporte.');const deck=shuffle(['S','H','D','C'].flatMap(s=>Array.from({length:13},(_,i)=>({s,v:i+2}))));const hands=new Map(ps.map(p=>[p.id,[deck.pop(),deck.pop()]]));const board=Array.from({length:5},()=>deck.pop());const scores=ps.map(p=>({id:p.id,score:bestHand([...hands.get(p.id),...board])}));const top=scores.reduce((x,y)=>!x||cmpScore(y.score,x.score)>0?y:x,null);const winners=ps.filter(p=>cmpScore(scores.find(x=>x.id===p.id).score,top.score)===0);
+    function render(revealed,status){setContent(`<div class="poker-layout"><div class="board-title">TABLE · ${esc(status)}</div><div class="card-row community">${board.map((c,i)=>cardHtml(c,i>=revealed)).join('')}</div><div class="gold-rule"></div><div class="hole-list">${ps.map(p=>`<div class="hole-entry"><div class="who">${esc(p.name)}</div><div class="card-row">${hands.get(p.id).map(c=>cardHtml(c)).join('')}</div><div class="poker-hand">${revealed===5?describeHand(scores.find(x=>x.id===p.id).score):'2 cartes visibles'}</div></div>`).join('')}</div></div><p class="tiny" style="text-align:center">Les combinaisons sont évaluées selon les règles officielles.</p>`);}
+    render(0,'distribution');await delay(800,token);render(3,'FLOP');await delay(1100,token);render(4,'TURN');await delay(1000,token);render(5,'RIVER');await delay(1800,token);
+    const losers=ps.filter(p=>!winners.some(w=>w.id===p.id));return {losses:losers.map(p=>({id:p.id,n:1})),summary:`${winners.map(w=>w.name).join(' et ')} ${winners.length===1?'remporte':'remportent'} le poker (${describeHand(top.score)}).`,details:ps.map(p=>`${p.name} : ${describeHand(scores.find(x=>x.id===p.id).score)}`).join(' · ')};
+  }
+
+  // Duel dé/roulette : les dés sont relancés en cas d'égalité.
+  // Si la roulette est sans danger, le perdant aux dés gagne la manche.
+  async function playDuelDice(token){const ps=alive();setMini('DUEL · DE & ROULETTE','Tout ou rien','Le plus petit dé affronte une chambre sur six. S’il survit, il remporte la manche.');
+    let rolls,retries=0;do{rolls=ps.map(p=>({p,d:randomInt(1,6)}));retries++;}while(rolls[0].d===rolls[1].d&&retries<1000);
+    setContent(`<div class="dice-grid duel">${ps.map(p=>`<div class="dice-box"><strong>${esc(p.name)}</strong><div class="dice-pair" id="dice-${p.id}">${dieHtml(0,true)}</div><div class="dice-total" id="total-${p.id}">—</div></div>`).join('')}</div>${humanIn(ps)?'<div class="game-bottom"><button class="btn btn-primary" data-action="dice-go">LANCER LES DÉS</button></div>':''}`);
+    if(humanIn(ps))await waitFor('dice-go',token);else await delay(500,token);guard(token);await delay(800,token);
+    for(const r of rolls){$('dice-'+r.p.id).innerHTML=dieHtml(r.d);$('total-'+r.p.id).textContent=String(r.d);}await delay(1050,token);
+    const risk=rolls[0].d<rolls[1].d?rolls[0].p:rolls[1].p,safe=ps.find(p=>p.id!==risk.id),hit=randomInt(1,6)===1;
+    setMini('LE DERNIER COUP','Une chambre sur six',`${risk.name} a perdu aux dés. Le barillet décidera du gagnant.`);
+    setContent(`<div class="roulette-wrap"><div class="roulette-chamber spinning" id="chamber"></div><div class="roul-status" id="roulette-status">${esc(risk.name)} tourne le barillet…</div><div class="glass-note">Probabilité de chambre chargée : 1 sur 6</div></div>`);await delay(1800,token);$('chamber')?.classList.remove('spinning');$('roulette-status').textContent=hit?'💥 IMPACT ! La tentative est fatale.':'CLIC. Chambre vide : retournement de situation !';await delay(1000,token);
+    const loser=hit?risk:safe,winner=hit?safe:risk;return {losses:[{id:loser.id,n:1}],summary:`${winner.name} gagne le duel ! ${loser.name} perd une vie.`,details:`Dés : ${rolls.map(r=>r.p.name+' '+r.d).join(' / ')} · ${risk.name} : ${hit?'impact':'chambre vide'}.`};
+  }
+
+  async function playRps(token){const ps=alive(),hasHuman=humanIn(ps);const score=new Map(ps.map(p=>[p.id,0]));let last='Le premier à trois points gagne.';let n=0;
+    while(Math.max(...score.values())<3){guard(token);n++;setMini('DUEL · SHIFUMI','Pierre · Feuille · Ciseaux','Le premier à trois victoires fait perdre une vie à son adversaire.');const scoreboard=`<div class="duel-score">${esc(ps[0].name)} ${score.get(ps[0].id)} &nbsp; — &nbsp; ${score.get(ps[1].id)} ${esc(ps[1].name)}</div>`;
+      if(hasHuman){setContent(`${scoreboard}<p class="glass-note" style="text-align:center">${esc(last)}</p><div class="rps-row">${RPS.map(c=>`<button class="choice" data-action="rps" data-choice="${c.key}"><span class="symbol">${c.icon}</span>${c.label}</button>`).join('')}</div><p class="tiny" style="text-align:center">Duel ${n} · Choisissez votre geste.</p>`);}else{setContent(`${scoreboard}<div class="winner-panel"><span class="big-icon">✊ ✋ ✌️</span><p>Les bots réfléchissent…</p></div>`);}
+      const chosen=hasHuman?await waitFor('rps',token):null;guard(token);const moves=new Map(ps.map(p=>[p.id,p.id===0&&hasHuman?chosen:pick(RPS).key]));const a=moves.get(ps[0].id),b=moves.get(ps[1].id);const wins=(x,y)=>(x==='rock'&&y==='scissors')||(x==='paper'&&y==='rock')||(x==='scissors'&&y==='paper');const winner=a===b?null:wins(a,b)?ps[0]:ps[1];if(winner)score.set(winner.id,score.get(winner.id)+1);
+      last=winner?`${winner.name} marque un point !`:'Égalité. Aucun point.';const info=p=>RPS.find(r=>r.key===moves.get(p.id));
+      setContent(`<div class="duel-score">${esc(ps[0].name)} ${score.get(ps[0].id)} &nbsp; — &nbsp; ${score.get(ps[1].id)} ${esc(ps[1].name)}</div><div class="duel-choices">${ps.map(p=>`<div><div class="gesture">${info(p).icon}</div><small>${esc(p.name)}<br>${info(p).label}</small></div>`).join('')}</div><p class="glass-note" style="text-align:center">${esc(last)}</p>`);await delay(hasHuman?1050:700,token);
+    }
+    const winner=ps.find(p=>score.get(p.id)===3),loser=ps.find(p=>p.id!==winner.id);return {losses:[{id:loser.id,n:1}],summary:`${winner.name} gagne le shifumi ${score.get(winner.id)} à ${score.get(loser.id)}.`,details:`Shifumi : ${winner.name} ${score.get(winner.id)} – ${score.get(loser.id)} ${loser.name}.`};
+  }
+
+  // Mise à jour centralisée : les pertes d'une manche sont simultanées.
+  // À égalité d'élimination, départage par les vies AVANT la manche,
+  // puis tirage aléatoire documenté pour attribuer des rangs distincts.
+  async function applyRound(result,mini,token){const g=state.game;const byId=new Map();for(const l of result.losses||[]){if(l.n>0&&g.players.find(p=>p.id===l.id)?.alive)byId.set(l.id,(byId.get(l.id)||0)+l.n);}
+    const prev=new Map(g.players.map(p=>[p.id,p.lives]));const effects=[];for(const [id,n] of byId){const p=g.players.find(x=>x.id===id),lost=Math.min(p.lives,n);p.lives=Math.max(0,p.lives-n);effects.push({p,n:lost});}
+    const dead=effects.filter(e=>e.p.lives===0).map(e=>e.p);for(const p of dead)p.alive=false;
+    // En cas de double/triple élimination, les candidats avec le moins
+    // de vies avant la manche sont classés plus bas ; égalité au sort.
+    let note='';if(dead.length>1){note='Éliminations simultanées : départage aux vies précédentes, puis au sort si nécessaire.';}
+    const order=dead.map(p=>({p,tie:Math.random()})).sort((x,y)=>prev.get(x.p.id)-prev.get(y.p.id)||x.tie-y.tie).map(x=>x.p);
+    for(const p of order){p.rank=3-g.eliminationOrder.length;g.eliminationOrder.push(p.id);}
+    g.history.unshift({round:g.round,game:mini.name,description:result.details||result.summary,losses:effects.map(e=>`${e.p.name} −${e.n}`).join(' · ')||'Aucune perte',note});
+    renderPlayers();
+    for(const {p,n} of effects){guard(token);await animateLoss(p,n,token);if(p.lives===0)await animateElimination(p,token);}
+    renderPlayers();
+    // La manche de casino peut exceptionnellement éliminer le trio à la fois.
+    // Les rangs sont alors attribués au sein du groupe simultané.
+    if(alive().length===1){const champion=alive()[0];if(!champion.rank)champion.rank=1;}
+  }
+  async function animateLoss(p,n,token){setOverlay(`<div class="overlay-card"><div class="eyebrow">SANCTION DE LA TABLE</div>${photo(p,'spotlight shake')}<div class="overlay-title">${esc(p.name)}</div><div class="lost-hearts">${'♥'.repeat(Math.min(n,5))}</div><div class="overlay-title" style="color:#ff8c7b;font-size:26px">−${n} ${n===1?'VIE':'VIES'}</div><p class="overlay-sub">Il reste ${p.lives} ${p.lives===1?'vie':'vies'} à ${esc(p.name)}.</p></div>`);await delay(1550,token);hideOverlay();}
+  async function animateElimination(p,token){setOverlay(`<div class="overlay-card"><div class="eyebrow">LE CASINO A TRANCHÉ</div>${photo(p,'spotlight')}<div class="eliminated-title">ÉLIMINÉ</div><div class="overlay-title" style="font-size:24px">${esc(p.name)}</div><p class="overlay-sub">${p.rank}e place · Sortie de table définitive.</p></div>`);await delay(1520,token);hideOverlay();}
+  function finishGame(){const g=state.game;let remaining=alive();if(remaining.length===1){const p=remaining[0];p.rank=1;}else if(remaining.length===0){ // Toutes les places doivent être affectées par applyRound.
+      const missing=g.players.filter(p=>!p.rank);for(const p of missing)p.rank=1;
+    }
+    const sorted=[...g.players].sort((a,b)=>(a.rank??4)-(b.rank??4));const human=g.players[0];const rank=human.rank??3;const eventCount=g.history.reduce((t,h)=>t+(h.losses==='Aucune perte'?0:1),0);
+    $('end').innerHTML=`<div class="brand" style="justify-content:center"><span class="mark">R</span> ROSU PMU</div><div class="end-crest" style="margin-top:24px">🏆</div><div class="eyebrow" style="margin-top:14px">LE VERDICT EST TOMBÉ</div><h1 class="end-title">FIN DE PARTIE</h1><div class="end-sub">Après ${g.round} ${g.round===1?'manche':'manches'} de suspense</div><div class="rankings">${sorted.map(p=>`<div class="rank-card ${p.rank===1?'first':''}"><div class="rank-medal">${['🥇','🥈','🥉'][p.rank-1]||'♠'}</div><div><div class="name">${esc(p.name)}</div><div class="meta">${p.rank===1?'Vainqueur de la table':'Éliminé'} · ${p.lives} ${p.lives===1?'vie restante':'vies restantes'}</div></div>${p.id===0?'<span class="badge-you">VOUS</span>':''}</div>`).join('')}</div><div class="end-award"><span>${rank===1?'Vous avez remporté le trophée':`Vous terminez à la ${rank}e place`}</span><h3>${esc(g.titles[rank-1])}</h3></div><div class="summary-line">${g.round} manches · ${eventCount} événements avec perte de vie · Aucun enjeu réel</div><div class="end-actions"><button class="btn btn-primary" data-action="restart">↻ &nbsp; REJOUER AVEC LES MÊMES TITRES</button><button class="btn btn-outline" data-action="end-history">☷ &nbsp; VOIR LES ÉVÉNEMENTS</button><button class="btn btn-outline" data-action="menu">RETOUR AU SALON</button></div>`;
+    setScreen('end');}
+  function historyHtml(){const g=state.game;return `<div class="overlay-card"><div class="eyebrow">ARCHIVES DU SALON</div><h2 class="overlay-title">Historique</h2><p class="overlay-sub">${g.history.length} ${g.history.length===1?'manche jouée':'manches jouées'}</p><div class="history-list">${g.history.length?g.history.map(h=>`<div class="history-entry"><strong>MANCHE ${h.round} · ${esc(h.game)}</strong><p>${esc(h.description)}</p><p style="color:#f7c3a6">${esc(h.losses)}</p>${h.note?`<p>${esc(h.note)}</p>`:''}</div>`).join(''):'<p class="glass-note">Aucune manche terminée.</p>'}</div><button class="btn btn-primary" style="width:100%;margin-top:15px" data-action="overlay-close">FERMER</button></div>`;}
+
+  // Un seul gestionnaire d'événements pour les boutons créés dynamiquement.
+  $('app').addEventListener('click',event=>{const btn=event.target.closest('[data-action]');if(!btn||btn.disabled)return;const action=btn.dataset.action;
+    if(action==='life-minus'||action==='life-plus'){state.settings.lives=Math.max(1,Math.min(20,state.settings.lives+(action==='life-minus'?-1:1)));renderHome();}
+    else if(action==='toggle-titles'){state.titlesOpen=!state.titlesOpen;renderHome();}
+    else if(action==='start'||action==='restart'){newGame();}
+    else if(action==='horse-select'){horseSelected=Number(btn.dataset.index);renderHorseChoices();}
+    else if(action==='horse-confirm'){resolveWait('horse-confirm',horseSelected);}
+    else if(action==='dice-go'||action==='roulette-go'||action==='next'){resolveWait(action,true);}
+    else if(action==='rps'){resolveWait('rps',btn.dataset.choice);}
+    else if(action==='history'||action==='end-history'){setOverlay(historyHtml());}
+    else if(action==='overlay-close'){hideOverlay();}
+    else if(action==='quit'){setOverlay(`<div class="overlay-card"><div class="eyebrow">QUITTER LE SALON ?</div><h2 class="overlay-title">Abandonner la partie</h2><p class="overlay-sub">Le classement de cette partie ne sera pas conservé.</p><div class="modal-buttons"><button class="btn btn-outline" data-action="overlay-close">CONTINUER</button><button class="btn btn-danger" data-action="confirm-quit">QUITTER</button></div></div>`);}
+    else if(action==='confirm-quit'||action==='menu'){cancelFlow();state.game=null;setScreen('home');renderHome();}
+  });
+  $('app').addEventListener('change',event=>{const e=event.target;if(e.dataset.action==='preset'&&e.value){const i=Number(e.dataset.index);state.settings.titles[i]=e.value;const input=$('title'+i);if(input)input.value=e.value;}});
+  $('app').addEventListener('input',event=>{const e=event.target;if(e.dataset.action==='title-input'){state.settings.titles[Number(e.dataset.index)]=e.value.trim()||ranksDefault[Number(e.dataset.index)];}});
+  // Vérifications du moteur poker au chargement (pas de dépendance externe).
+  const testCards=(vs,s='S')=>vs.map(v=>({v,s}));
+  console.assert(scoreFive(testCards([10,11,12,13,14]))[0]===8,'Quinte flush royale');
+  console.assert(scoreFive([{v:14,s:'S'},{v:2,s:'H'},{v:3,s:'D'},{v:4,s:'C'},{v:5,s:'S'}])[1]===5,'Quinte basse');
+  renderHome();
+})();
+</script>
+</body>
+</html>
