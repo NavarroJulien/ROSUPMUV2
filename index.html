@@ -1,0 +1,237 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+  <meta name="theme-color" content="#11161c">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="description" content="Accéder à ROSU PMU et Big R.">
+  <title>ROSU — Accueil</title>
+  <style>
+    /*
+      ACCUEIL ROSU — format vertical, iPhone en priorité.
+      À placer dans le même dossier que : pic/fde2.jpeg, page1.html et page2.html.
+      Fonctionne sans JavaScript, connexion Internet ni bibliothèque externe.
+    */
+    :root {
+      color-scheme: dark;
+      font-family: -apple-system, BlinkMacSystemFont, "SF Pro Display", "SF Pro Text", "Helvetica Neue", Arial, sans-serif;
+      font-synthesis: none;
+      -webkit-font-smoothing: antialiased;
+      -moz-osx-font-smoothing: grayscale;
+    }
+
+    *, *::before, *::after { box-sizing: border-box; }
+    html { width: 100%; min-height: 100%; background: #0b1118; }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      min-height: 100dvh;
+      display: grid;
+      place-items: center;
+      overflow-x: hidden;
+      -webkit-tap-highlight-color: transparent;
+    }
+
+    /* L'affichage garde une silhouette verticale, même sur ordinateur. */
+    .screen {
+      position: relative;
+      isolation: isolate;
+      width: 100%;
+      min-height: 100vh;
+      min-height: 100dvh;
+      display: flex;
+      flex-direction: column;
+      justify-content: flex-end;
+      overflow: hidden;
+      background: #171e29;
+    }
+
+    /* Image de fond réelle, recadrée sans jamais être étirée.
+       Les dégradés offrent aussi un repli si fde2.png est absente. */
+    .screen::before {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: -2;
+      background-image:
+        url("pic/fde2.jpeg"),
+        radial-gradient(ellipse at 48% 26%, #3a4b62, #111820 70%);
+      background-position: center center;
+      background-size: cover;
+      background-repeat: no-repeat;
+      transform: scale(1.015);
+    }
+
+    /* Fondu limité à la partie basse pour conserver le visuel au centre. */
+    .screen::after {
+      content: "";
+      position: absolute;
+      inset: 0;
+      z-index: -1;
+      background: linear-gradient(
+        180deg,
+        rgba(4, 8, 15, .12) 0%,
+        rgba(4, 8, 15, .04) 30%,
+        rgba(4, 8, 15, .10) 46%,
+        rgba(4, 8, 15, .32) 64%,
+        rgba(4, 8, 15, .72) 100%
+      );
+      pointer-events: none;
+    }
+
+    .menu {
+      width: 100%;
+      display: grid;
+      gap: 14px;
+      padding:
+        24px
+        max(24px, env(safe-area-inset-right, 0px))
+        calc(clamp(58px, 10vh, 110px) + env(safe-area-inset-bottom, 0px))
+        max(24px, env(safe-area-inset-left, 0px));
+      animation: arrive .85s cubic-bezier(.17,.8,.23,1) both;
+    }
+
+    /* Deux grandes cartes glassmorphism : cibles tactiles confortables. */
+    .menu__link {
+      position: relative;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      min-height: 94px;
+      width: 100%;
+      padding: 18px 18px 18px 24px;
+      gap: 15px;
+      border: 1px solid rgba(255,255,255,.35);
+      border-radius: 27px;
+      background: linear-gradient(118deg,
+        rgba(255,255,255,.26) 0%,
+        rgba(255,255,255,.13) 48%,
+        rgba(255,255,255,.09) 100%);
+      box-shadow:
+        0 15px 48px rgba(0,0,0,.19),
+        inset 0 1px 0 rgba(255,255,255,.28),
+        inset 0 -1px 0 rgba(255,255,255,.05);
+      -webkit-backdrop-filter: saturate(1.65) blur(24px);
+      backdrop-filter: saturate(1.65) blur(24px);
+      color: #fff;
+      text-decoration: none;
+      cursor: pointer;
+      touch-action: manipulation;
+      user-select: none;
+      -webkit-user-select: none;
+      transition: transform .23s ease, background .23s ease, border-color .23s ease, box-shadow .23s ease;
+    }
+
+    .menu__link::before {
+      content: "";
+      position: absolute;
+      left: 20px;
+      right: 20px;
+      top: 1px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, rgba(255,255,255,.55), transparent);
+      pointer-events: none;
+    }
+
+    .menu__name {
+      font-size: clamp(23px, 6vw, 27px);
+      font-weight: 640;
+      line-height: 1.1;
+      letter-spacing: -.05em;
+      text-shadow: 0 1px 14px rgba(0,0,0,.13);
+    }
+
+    .menu__arrow {
+      width: 46px;
+      height: 46px;
+      flex: 0 0 46px;
+      border-radius: 50%;
+      display: grid;
+      place-items: center;
+      background: rgba(255,255,255,.17);
+      border: 1px solid rgba(255,255,255,.29);
+      box-shadow: inset 0 1px 0 rgba(255,255,255,.15);
+      transition: transform .23s ease, background .23s ease;
+    }
+
+    .menu__arrow svg {
+      display: block;
+      width: 21px;
+      height: 21px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 1.85;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
+
+    .menu__link:active { transform: scale(.976); }
+    .menu__link:focus-visible { outline: 3px solid #fff; outline-offset: 4px; }
+
+    @media (hover: hover) and (pointer: fine) {
+      .menu__link:hover {
+        transform: translateY(-3px);
+        border-color: rgba(255,255,255,.56);
+        background: linear-gradient(118deg, rgba(255,255,255,.35), rgba(255,255,255,.16));
+        box-shadow: 0 20px 52px rgba(0,0,0,.26), inset 0 1px 0 rgba(255,255,255,.35);
+      }
+      .menu__link:hover .menu__arrow {
+        transform: translateX(3px);
+        background: rgba(255,255,255,.25);
+      }
+    }
+
+    /* Affichage façon application verticale sur ordinateur. */
+    @media (min-width: 600px) {
+      body { padding: 24px; }
+      .screen {
+        width: min(430px, 100%);
+        height: min(932px, calc(100dvh - 48px));
+        min-height: min(932px, calc(100dvh - 48px));
+        border-radius: 38px;
+        border: 1px solid rgba(255,255,255,.1);
+        box-shadow: 0 30px 90px rgba(0,0,0,.53);
+      }
+      .menu { padding-bottom: 76px; }
+    }
+
+    /* Paysage / écrans très courts : garder les deux accès visibles. */
+    @media (max-height: 530px) {
+      .menu { gap: 10px; padding-top: 15px; padding-bottom: calc(18px + env(safe-area-inset-bottom, 0px)); }
+      .menu__link { min-height: 65px; border-radius: 20px; padding-block: 10px; }
+      .menu__name { font-size: 21px; }
+      .menu__arrow { width: 41px; height: 41px; flex-basis: 41px; }
+    }
+
+    @keyframes arrive {
+      from { opacity: 0; transform: translateY(24px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+
+    @media (prefers-reduced-motion: reduce) {
+      *, *::before, *::after { animation: none !important; transition: none !important; }
+    }
+  </style>
+</head>
+<body>
+  <main class="screen">
+    <nav class="menu" aria-label="Choisir une page">
+      <a class="menu__link" href="page1.html">
+        <span class="menu__name">ROSU PMU</span>
+        <span class="menu__arrow" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
+        </span>
+      </a>
+      <a class="menu__link" href="page2.html">
+        <span class="menu__name">Big R</span>
+        <span class="menu__arrow" aria-hidden="true">
+          <svg viewBox="0 0 24 24"><path d="M5 12h14m-7-7 7 7-7 7"/></svg>
+        </span>
+      </a>
+    </nav>
+  </main>
+</body>
+</html>
