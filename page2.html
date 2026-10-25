@@ -1,0 +1,419 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Tirage au sort</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Bricolage+Grotesque:opsz,wght@12..96,300..800&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --paper: #5A0A13;
+    --card: #750F1C;
+    --ink: #FFF1EC;
+    --muted: #E5ABA6;
+    --line: #9E2E3A;
+    --accent: #FF4D4D;
+    --accent-soft: #94202D;
+    --font: "Bricolage Grotesque", "Helvetica Neue", Arial, sans-serif;
+  }
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  html { background: var(--paper); }
+  body {
+    font-family: var(--font);
+    color: var(--ink);
+    min-height: 100vh;
+    padding: clamp(1.25rem, 4vw, 3rem);
+    line-height: 1.5;
+    background: radial-gradient(ellipse 80% 55% at 50% -5%, #A3182A 0%, transparent 70%) no-repeat, var(--paper);
+    background-attachment: fixed;
+  }
+  main { max-width: 960px; margin: 0 auto; }
+
+  header {
+    display: flex; justify-content: space-between; align-items: baseline;
+    margin-bottom: 1.5rem;
+  }
+  h1 { font-size: 1.1rem; font-weight: 600; letter-spacing: -0.01em; }
+  #total { color: var(--muted); font-size: .95rem; }
+
+  /* ---------- Scène principale ---------- */
+  .stage {
+    position: relative;
+    background: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 32px;
+    min-height: 320px;
+    padding: 1.5rem 1.75rem 1.75rem;
+    display: flex; flex-direction: column; justify-content: space-between;
+    overflow: hidden;
+  }
+  .stage::after {            /* onde qui part du centre quand un nom est tiré */
+    content: ""; position: absolute; left: 50%; top: 50%;
+    width: 40px; height: 40px; border-radius: 50%;
+    border: 2px solid var(--accent);
+    transform: translate(-50%, -50%) scale(0); opacity: 0;
+    pointer-events: none;
+  }
+  .stage.hit::after { animation: ring .9s ease-out; }
+  @keyframes ring {
+    0%   { transform: translate(-50%, -50%) scale(0); opacity: .8; }
+    100% { transform: translate(-50%, -50%) scale(28); opacity: 0; }
+  }
+  #status { color: var(--muted); font-size: .95rem; min-height: 1.5em; }
+  .reel { text-align: center; padding: 1.5rem 0 1rem; }
+  #name {
+    display: inline-block;
+    font-size: clamp(2.4rem, 8.5vw, 5.6rem);
+    font-weight: 650;
+    letter-spacing: -0.035em;
+    line-height: 1.05;
+    color: var(--muted);
+    transition: color .25s;
+  }
+  #name.idle { color: #C47A7E; }
+  #name.tick { animation: tick .13s ease-out; }
+  @keyframes tick {
+    from { transform: translateY(45%); opacity: 0; filter: blur(6px); }
+    to   { transform: none; opacity: 1; filter: blur(0); }
+  }
+  #name.final { color: var(--ink); animation: pop .55s cubic-bezier(.2, 1.4, .4, 1); }
+  @keyframes pop {
+    0%   { transform: scale(.88); }
+    100% { transform: scale(1); }
+  }
+  .bar {
+    height: 4px; width: 120px; margin: .9rem auto 0;
+    background: var(--accent); border-radius: 4px;
+    transform: scaleX(0); transition: transform .5s cubic-bezier(.2, .8, .2, 1);
+  }
+  .bar.on { transform: scaleX(1); }
+
+  /* ---------- Boutons ---------- */
+  .actions {
+    display: grid; grid-template-columns: repeat(2, 1fr); gap: .9rem;
+    margin: 1.1rem 0 2.5rem;
+  }
+  .btn {
+    font: inherit; color: var(--ink); text-align: left; cursor: pointer;
+    background: transparent;
+    border: 1px solid var(--line);
+    border-radius: 20px;
+    padding: 1.1rem 1.3rem;
+    display: flex; flex-direction: column; gap: .15rem;
+    transition: transform .15s, background .2s, border-color .2s, color .2s;
+  }
+  .btn strong { font-size: 1.15rem; font-weight: 600; letter-spacing: -0.015em; }
+  .btn span { font-size: .9rem; color: var(--muted); transition: color .2s; }
+  .btn:hover:not(:disabled) { border-color: var(--ink); transform: translateY(-2px); }
+  .btn:active:not(:disabled) { transform: translateY(0) scale(.985); }
+  .btn.primary { background: var(--accent); border-color: var(--accent); color: #2A0509; }
+  .btn.primary span { color: #5A0F16; }
+  .btn.primary:hover:not(:disabled) { border-color: #FF7A7A; background: #FF6A6A; }
+  .btn:disabled { opacity: .45; cursor: not-allowed; }
+  .btn:focus-visible, .link:focus-visible {
+    outline: 3px solid var(--accent); outline-offset: 3px;
+  }
+
+  /* ---------- Sections ---------- */
+  section { margin-bottom: 2.5rem; }
+  .head {
+    display: flex; justify-content: space-between; align-items: baseline;
+    margin-bottom: .9rem;
+  }
+  h2 { font-size: 1.05rem; font-weight: 600; letter-spacing: -0.01em; }
+  .link {
+    font: inherit; font-size: .9rem; color: var(--muted);
+    background: none; border: none; cursor: pointer;
+    text-decoration: underline; text-underline-offset: 3px;
+  }
+  .link:hover { color: var(--ink); }
+
+  #results { display: none; }
+  #results.show { display: block; }
+  #log { list-style: none; border-top: 1px solid var(--line); }
+  #log li {
+    display: flex; align-items: baseline; gap: 1rem;
+    padding: .8rem 0; border-bottom: 1px solid var(--line);
+    animation: row .4s ease-out;
+  }
+  @keyframes row { from { opacity: 0; transform: translateX(-12px); } to { opacity: 1; transform: none; } }
+  #log .n { width: 1.8rem; color: var(--muted); font-size: .9rem; font-variant-numeric: tabular-nums; }
+  #log .who { font-size: 1.2rem; font-weight: 550; letter-spacing: -0.015em; }
+  #log .times { margin-left: auto; color: var(--accent); font-weight: 600; }
+
+  #chips { list-style: none; display: flex; flex-wrap: wrap; gap: .5rem; }
+  #chips li {
+    border: 1px solid var(--line); border-radius: 999px;
+    padding: .4rem .95rem; font-size: .95rem; background: var(--card);
+    transition: background .12s, border-color .12s, color .12s, transform .12s;
+  }
+  #chips li.on { background: var(--accent-soft); border-color: var(--accent); transform: scale(1.06); }
+  #chips li.hit { background: var(--ink); border-color: var(--ink); color: var(--paper); }
+  #chips li b { margin-left: .45rem; font-weight: 600; color: #C4161C; }
+  #chips li:not(.hit) b { color: #FF8A84; }
+
+  @media (max-width: 640px) {
+    .actions { grid-template-columns: 1fr; }
+    .stage { min-height: 260px; border-radius: 26px; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    * { animation-duration: .01s !important; transition-duration: .01s !important; }
+  }
+</style>
+</head>
+<body>
+<main>
+  <header>
+    <h1>Tirage au sort</h1>
+    <div id="total"></div>
+  </header>
+
+  <div class="stage" id="stage">
+    <div id="status" aria-live="polite">Choisis un tirage ci-dessous.</div>
+    <div class="reel">
+      <div id="name" class="idle">Qui sera tiré ?</div>
+      <div class="bar" id="bar"></div>
+    </div>
+    <div></div>
+  </div>
+
+  <div class="actions">
+    <button class="btn primary" id="btn1"><strong>Tirer une personne</strong><span>Un nom au hasard</span></button>
+    <button class="btn" id="btn2"><strong>Tirer trois personnes</strong><span>Trois noms différents, un par un</span></button>
+    <button class="btn" id="btn3"><strong>Jusqu’à 2 fois</strong><span>Tire jusqu’à ce qu’un nom sorte 2 fois</span></button>
+    <button class="btn" id="btn4"><strong>Jusqu’à 3 fois</strong><span>Tire jusqu’à ce qu’un nom sorte 3 fois</span></button>
+  </div>
+
+  <section id="results">
+    <div class="head">
+      <h2>Tirages</h2>
+      <button class="link" id="clear">Effacer</button>
+    </div>
+    <ol id="log"></ol>
+  </section>
+
+  <section>
+    <div class="head"><h2>La liste</h2></div>
+    <ul id="chips"></ul>
+  </section>
+</main>
+
+<script>
+  /* =====================================================================
+     LA LISTE DES PERSONNALITÉS
+     Pour en ajouter une : copie une ligne ci-dessous, colle-la juste en
+     dessous, et change le nom entre les guillemets. N’oublie pas la virgule
+     à la fin de la ligne !
+     ===================================================================== */
+  const PERSONNES = [
+    "Sweetie Fox",
+    "Angy Heaven BTBF",
+    "Comatozze",
+    "Jennie Kittie",
+    "Rosie Rider",
+    "Melolo BTBF",
+    "Jessica Jodi",
+    "Mymy IBN BTBF",
+    "Lauren Walker",
+    "La Petite Ange BTBF",
+    "Ruth Lee",
+    "Martina Smeraldi",
+    "Abella Danger",
+    "Khloxxx",
+    "Khalamite",
+    "Lily Phillips",
+    "Anastangel",
+    "CallMeSloo BTBF",
+    "Waifumiia",
+    "Automn Falls",
+    "Sorenza BTBF",
+    "Jaemliz",
+    "Hellolimoon BTBF",
+    "Aphrodixia BTBF",
+    "Kazumi Squirt",
+    "Cléa Gauthier",
+    "Itsxlilix",
+    "Anna Polina",
+    "Anissa Kate",
+    "Amouranthe",
+    "Mia Maklova",
+    "Khloé Knowles",
+    "Marie Dee",
+    "Emily Black",
+    "Sisi Rose",
+    "Teanna Trump",
+    "Coco Lovelock",
+    "Polly Yangs",
+    "Dani Daniels",
+    "Emma Auturin",
+    "Lea CHipie BTBF",
+    "Mia Monroe",
+    "Brenda Trindade",
+    "Hazel Moore",
+    "Lexie Lore",
+    "Riley Reid",
+    "Jadeteen",
+    "Kali Roses",
+    "Lana Rhoades",
+    "Mia Khalifa",
+
+ ];
+  /* ===================================================================== */
+
+  const $ = id => document.getElementById(id);
+  const stage = $("stage"), nameEl = $("name"), bar = $("bar"), statusEl = $("status");
+  const chipsEl = $("chips"), logEl = $("log"), resultsEl = $("results");
+  const buttons = [$("btn1"), $("btn2"), $("btn3"), $("btn4")];
+  const reduceMotion = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const n = PERSONNES.length;
+
+  let counts = new Array(n).fill(0);
+  let busy = false;
+  let lastOn = -1;
+
+  const sleep = ms => new Promise(r => setTimeout(r, ms));
+  const rand = max => Math.floor(Math.random() * max);
+
+  /* --- Affichage de la liste --- */
+  $("total").textContent = n + " personnalité" + (n > 1 ? "s" : "");
+  const chips = PERSONNES.map(nom => {
+    const li = document.createElement("li");
+    li.append(nom, document.createElement("b"));
+    chipsEl.appendChild(li);
+    return li;
+  });
+
+  function refreshChips() {
+    chips.forEach((li, i) => {
+      li.classList.toggle("hit", counts[i] > 0);
+      li.querySelector("b").textContent = counts[i] > 1 ? "×" + counts[i] : "";
+    });
+  }
+
+  function setBusy(v) { busy = v; buttons.forEach(b => b.disabled = v); $("clear").disabled = v; }
+  function say(t) { statusEl.textContent = t; }
+
+  function reset() {
+    counts.fill(0);
+    logEl.innerHTML = "";
+    resultsEl.classList.remove("show");
+    refreshChips();
+  }
+
+  /* --- Animation : le nom défile puis ralentit jusqu’au gagnant --- */
+  function show(k) {
+    nameEl.textContent = PERSONNES[k];
+    nameEl.classList.remove("tick", "idle");
+    void nameEl.offsetWidth;                 // relance l’animation
+    nameEl.classList.add("tick");
+    if (lastOn >= 0) chips[lastOn].classList.remove("on");
+    chips[k].classList.add("on");
+    lastOn = k;
+  }
+
+  async function spin(index, steps) {
+    nameEl.classList.remove("final");
+    bar.classList.remove("on");
+    stage.classList.remove("hit");
+    let last = -1;
+    for (let i = 0; i < steps; i++) {
+      let k = index;
+      if (i < steps - 1) {
+        let tries = 0;
+        do { k = rand(n); tries++; }
+        while (n > 2 && tries < 30 && (k === last || (i === steps - 2 && k === index)));
+      }
+      show(k);
+      last = k;
+      if (!reduceMotion) await sleep(40 + Math.pow(i / steps, 3) * 280);
+    }
+    nameEl.classList.remove("tick");
+    nameEl.classList.add("final");
+    bar.classList.add("on");
+    void stage.offsetWidth;
+    stage.classList.add("hit");
+    chips[index].classList.remove("on");
+    lastOn = -1;
+  }
+
+  function addLog(index, showTimes) {
+    counts[index]++;
+    refreshChips();
+    resultsEl.classList.add("show");
+    const li = document.createElement("li");
+    const num = document.createElement("span");
+    num.className = "n"; num.textContent = logEl.children.length + 1;
+    const who = document.createElement("span");
+    who.className = "who"; who.textContent = PERSONNES[index];
+    li.append(num, who);
+    if (showTimes && counts[index] > 1) {
+      const t = document.createElement("span");
+      t.className = "times"; t.textContent = counts[index] + " fois";
+      li.appendChild(t);
+    }
+    logEl.appendChild(li);
+  }
+
+  /* --- Les 4 modes de tirage --- */
+  async function tirerUn() {
+    if (busy || n < 1) return;
+    reset(); setBusy(true);
+    say("Tirage en cours…");
+    const i = rand(n);
+    await spin(i, 28);
+    addLog(i, false);
+    say("Personne tirée.");
+    setBusy(false);
+  }
+
+  async function tirerTrois() {
+    if (busy) return;
+    if (n < 3) { say("Il faut au moins 3 personnes dans la liste."); return; }
+    reset(); setBusy(true);
+    const pool = [...Array(n).keys()];
+    for (let r = 1; r <= 3; r++) {
+      say("Personne " + r + " sur 3…");
+      const i = pool.splice(rand(pool.length), 1)[0];   // jamais deux fois la même
+      await spin(i, 24);
+      addLog(i, false);
+      if (r < 3) await sleep(reduceMotion ? 0 : 500);
+    }
+    say("Trois personnes tirées.");
+    setBusy(false);
+  }
+
+  async function tirerJusqua(cible) {
+    if (busy || n < 1) return;
+    reset(); setBusy(true);
+    let tour = 0;
+    while (true) {
+      tour++;
+      say("Tirage " + tour + "…");
+      const i = rand(n);                                // un nom peut ressortir
+      await spin(i, tour === 1 ? 26 : 16);
+      addLog(i, true);
+      if (counts[i] >= cible) {
+        say(PERSONNES[i] + " est sortie ou sorti " + cible + " fois en " + tour + " tirages.");
+        break;
+      }
+      await sleep(reduceMotion ? 0 : 350);
+    }
+    setBusy(false);
+  }
+
+  $("btn1").addEventListener("click", tirerUn);
+  $("btn2").addEventListener("click", tirerTrois);
+  $("btn3").addEventListener("click", () => tirerJusqua(2));
+  $("btn4").addEventListener("click", () => tirerJusqua(3));
+  $("clear").addEventListener("click", () => {
+    reset();
+    nameEl.textContent = "Qui sera tiré ?";
+    nameEl.className = "idle";
+    bar.classList.remove("on");
+    say("Choisis un tirage ci-dessous.");
+  });
+</script>
+</body>
+</html>
